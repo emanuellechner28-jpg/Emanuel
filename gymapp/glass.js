@@ -173,14 +173,10 @@
       float dome = dot(nrm, L) * pow(td, 1.4);
       col += vec3(max(dome, 0.0) * 0.015);
       col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.30 : 0.26);
-      // Tropfen: Rand wirft das Licht stärker und wirkt dunkler (Brechung), innen bleibt es klar
-      col *= 1.0 - 0.20 * (1.0 - smoothstep(0.0, uBand * 0.9, e));
 
       // Kante: feine Linie, darüber das Licht am Rand (links/oben direkt, rechts/unten gespiegelt)
-      float lined = smoothstep(0.5, 0.0, e) * (uLight > 0.5 ? 0.16 : 0.08);
-      col = mix(col, uLight > 0.5 ? vec3(0.0) : vec3(1.0), lined);
       float facing = abs(nrm.x + nrm.y);
-      float along = e / (2.2 * sqrt(max(1.0, facing)));
+      float along = e / (1.3 * sqrt(max(1.0, facing)));
       float shine = uShine;
       float rim = along < 1.0 ? shine * pow(min(1.0, facing), 1.5) * (1.0 - pow(along, 1.5)) : 0.0;
       // weiches Licht etwas weiter innen, nur auf der Lichtseite
@@ -192,11 +188,12 @@
       // Lichtbogen: das Licht sammelt sich innen am Rand gegenüber (Tropfen als Linse)
       float caust = smoothstep(2.0, 9.0, e) * smoothstep(30.0, 8.0, e) * max(dot(nrm, -L), 0.0);
       col += vec3(caust * (uLight > 0.5 ? 0.10 : 0.16));
-      float hi = clamp(rim + soft + spec, 0.0, 1.0);
+      float edgeLine = smoothstep(1.1, 0.15, e) * (0.40 + 0.40 * max(dot(nrm, L), 0.0));
+      float hi = clamp(rim + soft + spec + edgeLine, 0.0, 1.0);
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
-      float bodyA = clamp(uBody + band * 0.5, 0.0, 1.0);
+      float bodyA = clamp(uBody + band * 0.22, 0.0, 1.0);
       vec3 pre = (1.0 - hi) * (col * bodyA) + hi * vec3(1.0);
       float alpha = hi + (1.0 - hi) * bodyA;
       pre *= 1.0 - uPress * 0.08;
@@ -206,7 +203,7 @@
 
   // Grundwerte der Linse, so wie im glisse-Beispiel <Glass style={{ "--lg-glass-bend": 0.76, ... }} />.
   // Pro Element lassen sie sich mit denselben CSS-Variablen ändern: --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine.
-  const LENS = { bend: 0.76, dispersion: 0.30, blur: 0, shine: 0.32, frost: 3 };
+  const LENS = { bend: 0.76, dispersion: 0.30, blur: 0, shine: 0.22, frost: 3 };
 
   // Was Glas bekommt. level 0 = Grundfläche, level 1 = liegt auf Glas und bricht die Fläche darunter.
   // top: Fläche liegt über dem Inhalt (Fotokarten, dort zeigt sich nur Rand und Glanz).
