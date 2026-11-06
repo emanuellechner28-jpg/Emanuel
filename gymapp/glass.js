@@ -191,7 +191,7 @@
       float bev = smoothstep(13.0, 0.0, e);                          // abgeschrägte Kante
       float sheen = 0.0;   // kein Glanz im Inneren: das Innere bleibt völlig klar   // weicher Glanz im oberen Teil
       float caust = smoothstep(2.0, 9.0, e) * smoothstep(28.0, 7.0, e) * dark;        // Licht sammelt sich innen gegenüber
-      float shA = clamp(bev * dark * 0.26, 0.0, 0.4) * (uLight > 0.5 ? 0.65 : 1.0);   // nur die Kante, innen nichts
+      float shA = 0.0;   // keine Kantenverschattung: nur die Brechung (Bend) bleibt
       float whA = 0.0;   // Glanz nur im Inneren, nicht am Rand
 
       vec3 pre = col * bodyA;
@@ -207,7 +207,7 @@
 
   // Grundwerte der Linse, so wie im glisse-Beispiel <Glass style={{ "--lg-glass-bend": 0.76, ... }} />.
   // Pro Element lassen sie sich mit denselben CSS-Variablen ändern: --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine.
-  const LENS = { bend: 2.4, dispersion: 0.45, blur: 0, shine: 0.11, frost: 0 };
+  const LENS = { bend: 2.4, dispersion: 0, blur: 0, shine: 0, frost: 0 };
 
   // Was Glas bekommt. level 0 = Grundfläche, level 1 = liegt auf Glas und bricht die Fläche darunter.
   // top: Fläche liegt über dem Inhalt (Fotokarten, dort zeigt sich nur Rand und Glanz).
