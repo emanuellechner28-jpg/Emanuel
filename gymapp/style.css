@@ -1203,8 +1203,8 @@ html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switc
 .orb-core.gl-el { --gl-shadow: 0 0 40px rgba(var(--acc-rgb),.25); }
 
 /* Glaskörper: dunkel ein leichter Schleier, hell ein heller (damit Text lesbar bleibt). Auf 0 gesetzt wäre das Glas ganz klar. */
-:root { --gl-veil: 28 30 34 .20; }
-html[data-theme="light"] { --gl-veil: 255 255 255 .14; }
+:root { --gl-veil: 225 232 250 .70; }
+html[data-theme="light"] { --gl-veil: 255 255 255 .75; }
 .gl-el { --gl-body-col: var(--gl-veil); }
 /* Fotokarten: nur Rand und Glanz über dem Foto */
 .gl-el.gl-top { --gl-body: 0; --gl-body-col: 0 0 0 0; }
@@ -1249,3 +1249,24 @@ html[data-theme="light"] .buy-panel.gl-el { --gl-body-col: 255 255 255 .96; }
 .hero { height: max(860px, 100vh); }
 .hero .bot-fade { height: 240px; }
 html[data-theme="light"] .hero .bot-fade { height: 260px; }
+
+/* ===== Echtes Glas: 85 % durchsichtig, Inhalt dahinter verschwimmt (Blur) ===== */
+/* Die Glasfläche (WebGL) liefert Rand, Brechung und Glanz; der Blur kommt vom Browser und trifft auch Text, Kacheln und Fotos hinter dem Glas. */
+.gl-el { --gl-body: .15; }
+#app .gl-el:not(.gl-keep):not(.gl-top):not(.gl-l1):not(.theme-card) { -webkit-backdrop-filter: blur(14px) saturate(1.4) !important; backdrop-filter: blur(14px) saturate(1.4) !important; }
+/* kleine Bedienelemente auf Glas etwas dichter, damit man sie sieht */
+.gl-el.tile, .gl-el.round-btn, .gl-el.start-btn, .gl-el.balance, .gl-el.rchip, .gl-el.hold, .gl-el.actbtn, .stepper button.gl-el { --gl-body: .30; }
+.switch.gl-el { --gl-body: .60; }
+/* gewählt: deutlicher */
+.tile.on.gl-el, .extile.sel.gl-el, .plan-opt.sel.gl-el, .switch.on.gl-el, .rchip.cur.gl-el { --gl-body: .75; }
+/* getönte Hauptknöpfe bleiben als Tropfen gefüllt, aber mit Glasrand */
+.btn-grad.gl-el, .seg button.on.gl-el { --gl-body: 1; --gl-tint: 232 233 236 .80; }
+html[data-theme="light"] .btn-grad.gl-el, html[data-theme="light"] .seg button.on.gl-el { --gl-tint: 20 22 26 .84; }
+/* Kaufpanel liegt über scrollenden Karten: Glas, aber dichter und stärker verschwommen */
+.buy-panel.gl-el { --gl-body: .70; --gl-body-col: 30 32 37 .90; }
+html[data-theme="light"] .buy-panel.gl-el { --gl-body-col: 255 255 255 .90; }
+#app .buy-panel.gl-el { -webkit-backdrop-filter: blur(26px) saturate(1.4) !important; backdrop-filter: blur(26px) saturate(1.4) !important; }
+/* Leiste und Pille bleiben durchsichtig (Blur sitzt schon an der Leiste) */
+#nav.gl-el { --gl-body: 0; }
+.nav-pill.gl-el { --gl-body: .30; }
+.gl-el.gl-top { --gl-body: 0; }

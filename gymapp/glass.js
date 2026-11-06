@@ -197,7 +197,7 @@
 
   // Grundwerte der Linse, so wie im glisse-Beispiel <Glass style={{ "--lg-glass-bend": 0.76, ... }} />.
   // Pro Element lassen sie sich mit denselben CSS-Variablen ändern: --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine.
-  const LENS = { bend: 0.76, dispersion: 0.15, blur: 0, shine: 0.22, frost: 3 };
+  const LENS = { bend: 0.76, dispersion: 0.30, blur: 0, shine: 0.32, frost: 3 };
 
   // Was Glas bekommt. level 0 = Grundfläche, level 1 = liegt auf Glas und bricht die Fläche darunter.
   // top: Fläche liegt über dem Inhalt (Fotokarten, dort zeigt sich nur Rand und Glanz).
@@ -641,6 +641,7 @@
     el.classList.add('gl-el');
     if (s.keep) el.classList.add('gl-keep');
     if (s.top) el.classList.add('gl-top');
+    if (s.level === 1) el.classList.add('gl-l1');
     const it = { el: el, cv: cv, cx2d: cv.getContext('2d'), level: s.level, top: !!s.top, global: !!s.global, cache: null };
     el.__gl = it;
     return it;
