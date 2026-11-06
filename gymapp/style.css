@@ -1190,15 +1190,15 @@ html[data-theme="light"] .nav-pill { background: linear-gradient(160deg, rgba(25
    Feinheiten pro Element über Variablen: --gl-body (0 bis 1), --gl-body-col, --gl-tint, --gl-tint-on
    und wie bei glisse --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine. */
 .gl-surface.top { z-index: 3; }
-.gl-el { isolation: isolate; --gl-shadow: 0 24px 48px -24px rgba(0,0,0,.42); }
+.gl-el { isolation: isolate; --gl-shadow: 0 2px 5px rgba(0,0,0,.22), 0 28px 46px -20px rgba(0,0,0,.52); }
 #app .gl-el:not(.gl-keep):not(.theme-card) { background: transparent !important; border-color: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 #app .gl-el:not(.gl-keep):not(.gl-top) { box-shadow: var(--gl-shadow) !important; }
 #app .gl-el.sel:not(.gl-top) { box-shadow: 0 0 0 1.5px var(--ring), 0 0 0 5px var(--ring2), var(--gl-shadow) !important; }
 #app .extile.gl-el.sel { box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px rgba(var(--acc-rgb),.22), var(--gl-shadow) !important; }
-html[data-theme="light"] .gl-el { --gl-shadow: 0 24px 48px -24px rgba(40,50,70,.30); }
+html[data-theme="light"] .gl-el { --gl-shadow: 0 2px 5px rgba(40,50,70,.14), 0 28px 46px -22px rgba(40,50,70,.36); }
 /* kleine Bedienelemente: engerer Schatten */
-.gl-el.round-btn, .gl-el.switch, .gl-el.actbtn, .gl-el.hold, .gl-el.rchip, .gl-el.balance, .gl-el.btn-grad, .stepper button.gl-el, .seg button.gl-el, .segpair button.gl-el { --gl-shadow: 0 10px 22px -12px rgba(0,0,0,.38); }
-html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switch, html[data-theme="light"] .gl-el.actbtn, html[data-theme="light"] .gl-el.hold, html[data-theme="light"] .gl-el.rchip, html[data-theme="light"] .gl-el.balance, html[data-theme="light"] .gl-el.btn-grad, html[data-theme="light"] .stepper button.gl-el, html[data-theme="light"] .seg button.gl-el, html[data-theme="light"] .segpair button.gl-el { --gl-shadow: 0 10px 22px -12px rgba(40,50,70,.30); }
+.gl-el.round-btn, .gl-el.switch, .gl-el.actbtn, .gl-el.hold, .gl-el.rchip, .gl-el.balance, .gl-el.btn-grad, .stepper button.gl-el, .seg button.gl-el, .segpair button.gl-el { --gl-shadow: 0 1px 3px rgba(0,0,0,.22), 0 12px 20px -10px rgba(0,0,0,.46); }
+html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switch, html[data-theme="light"] .gl-el.actbtn, html[data-theme="light"] .gl-el.hold, html[data-theme="light"] .gl-el.rchip, html[data-theme="light"] .gl-el.balance, html[data-theme="light"] .gl-el.btn-grad, html[data-theme="light"] .stepper button.gl-el, html[data-theme="light"] .seg button.gl-el, html[data-theme="light"] .segpair button.gl-el { --gl-shadow: 0 1px 3px rgba(40,50,70,.14), 0 12px 20px -10px rgba(40,50,70,.34); }
 .vs-thumb b.gl-el { --gl-shadow: 0 8px 18px -6px rgba(0,0,0,.40); box-shadow: var(--gl-shadow) !important; }
 .orb-core.gl-el { --gl-shadow: 0 0 40px rgba(var(--acc-rgb),.25); }
 

@@ -182,8 +182,23 @@
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
       float bodyA = clamp(uBody + band * 0.22, 0.0, 1.0);
-      vec3 pre = (1.0 - hi) * (col * bodyA) + hi * mix(vec3(1.0), col, 0.45);   // Kantenlicht nimmt die Farbe dahinter an, kein reines Weiß
-      float alpha = hi + (1.0 - hi) * bodyA;
+
+      // Dicke und Wölbung: Schicht für Schicht über das Glas gelegt (so bleibt auch durchsichtiges Glas dreidimensional)
+      vec2 qn = q / vec2(hw, hh);
+      float dome = clamp(dot(qn, L), -1.0, 1.0);                    // +1 Lichtseite, -1 Schattenseite
+      float dark = max(dot(nrm, -L), 0.0);
+      float bev = smoothstep(13.0, 0.0, e);                          // abgeschrägte Kante
+      float sheen = smoothstep(0.45, -1.0, qn.y) * 0.07 * smoothstep(0.0, 12.0, e);   // weicher Glanz im oberen Teil
+      float caust = smoothstep(2.0, 9.0, e) * smoothstep(28.0, 7.0, e) * dark;        // Licht sammelt sich innen gegenüber
+      float shA = clamp(bev * dark * 0.26 + max(-dome, 0.0) * 0.07 * smoothstep(0.0, 16.0, e), 0.0, 0.4) * (uLight > 0.5 ? 0.65 : 1.0);
+      float whA = clamp(bev * lit * 0.12 + max(dome, 0.0) * 0.035 + sheen + caust * 0.10, 0.0, 0.35);
+
+      vec3 pre = col * bodyA;
+      float alpha = bodyA;
+      pre *= 1.0 - shA; alpha = alpha + shA * (1.0 - alpha);                     // Schattenseite abdunkeln
+      vec3 W = mix(vec3(1.0), col, 0.45);
+      pre = pre * (1.0 - whA) + W * whA; alpha = alpha + whA * (1.0 - alpha);    // Lichtseite und Glanz aufhellen
+      pre = pre * (1.0 - hi) + mix(vec3(1.0), col, 0.45) * hi; alpha = alpha + hi * (1.0 - alpha);   // Lichtkante
       pre *= 1.0 - uPress * 0.08;
       pre += (hash(floor(p * 1.5)) - 0.5) * 0.010 * bodyA;
       gl_FragColor = vec4(pre * aa, alpha * aa);
