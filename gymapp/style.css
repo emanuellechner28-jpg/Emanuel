@@ -1203,8 +1203,8 @@ html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switc
 .orb-core.gl-el { --gl-shadow: 0 0 40px rgba(var(--acc-rgb),.25); }
 
 /* Glaskörper: dunkel ein leichter Schleier, hell ein heller (damit Text lesbar bleibt). Auf 0 gesetzt wäre das Glas ganz klar. */
-:root { --gl-veil: 28 30 34 .38; }
-html[data-theme="light"] { --gl-veil: 255 255 255 .42; }
+:root { --gl-veil: 28 30 34 .20; }
+html[data-theme="light"] { --gl-veil: 255 255 255 .14; }
 .gl-el { --gl-body-col: var(--gl-veil); }
 /* Fotokarten: nur Rand und Glanz über dem Foto */
 .gl-el.gl-top { --gl-body: 0; --gl-body-col: 0 0 0 0; }

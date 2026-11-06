@@ -98,6 +98,7 @@
     uniform float uDisp;    // Farbaufspaltung (glisse: --lg-glass-dispersion)
     uniform float uBlur;    // Weichzeichner in Pixeln (glisse: --lg-blur)
     uniform float uShine;   // Glanz am Rand (glisse: --lg-rim-shine)
+    uniform float uFrost;   // Weichzeichner im Inneren in Pixeln (damit Text über Fotos lesbar bleibt)
 
     vec2 suv(vec2 p) { return vec2(p.x / uRes.x, 1.0 - p.y / uRes.y); }
     float sdf(vec2 q, vec2 hb, float r) {
@@ -142,7 +143,7 @@
       float e = max(-d, 0.0);
 
       // Linse: am Rand zeigt das Glas Inhalt von weiter innen (Wölbung einer flachen Kuppel)
-      float depth = 0.25 * mn;
+      float depth = min(0.25 * mn, 34.0);      // Breite des gewölbten Rands: bei großen Karten nur ein schmaler Streifen
       float sag = max(0.01, min(0.5 * mn, min(hw, hh) - 1.0));
       float Rx, sx, Ry, sy;
       arc(sag, hw, Rx, sx); arc(sag, hh, Ry, sy);
@@ -150,13 +151,14 @@
       float iw = max(0.0, hw - depth), ih = max(0.0, hh - depth);
       float ir = clamp(rad, 0.0, min(iw, ih));
       float fo = 0.5 * (1.0 + tanhf(1.7724538509 * sdf(q, vec2(iw, ih) - ir, ir) / (depth * 1.41421)));
-      vec2 pull = clamp(pullDir * fo, -1.0, 1.0) * uBend * mn;
+      vec2 pull = clamp(pullDir * fo, -1.0, 1.0) * uBend * min(mn, 84.0);   // große Karten verzerren nicht stärker als mittlere
 
       // Farbaufspaltung wie bei glisse: Rot biegt am weitesten, Blau am wenigsten
       vec3 col;
-      col.r = blurAt(p - pull * (1.0 + 0.2 * uDisp), uBlur).r;
-      col.g = blurAt(p - pull * (1.0 + 0.1 * uDisp), uBlur).g;
-      col.b = blurAt(p - pull, uBlur).b;
+      float br = uBlur + uFrost * smoothstep(0.0, depth * 1.2, e);   // innen leicht weich, am Rand scharf
+      col.r = blurAt(p - pull * (1.0 + 0.2 * uDisp), br).r;
+      col.g = blurAt(p - pull * (1.0 + 0.1 * uDisp), br).g;
+      col.b = blurAt(p - pull, br).b;
 
       // Glaskörper wie bei iOS: halbtransparente Fläche
       col = mix(col, uBodyCol.rgb, uBodyCol.a);
@@ -174,10 +176,10 @@
       }
       float dome = dot(nrm, L) * pow(td, 1.4);
       col += vec3(max(dome, 0.0) * (uLight > 0.5 ? 0.07 : 0.05));
-      col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.10 : 0.16);
+      col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.22 : 0.16);
 
       // Kante: feine Linie, darüber das Licht am Rand (links/oben direkt, rechts/unten gespiegelt)
-      float lined = smoothstep(0.5, 0.0, e) * 0.08;
+      float lined = smoothstep(0.5, 0.0, e) * (uLight > 0.5 ? 0.16 : 0.08);
       col = mix(col, uLight > 0.5 ? vec3(0.0) : vec3(1.0), lined);
       float facing = abs(nrm.x + nrm.y);
       float along = e / (2.2 * sqrt(max(1.0, facing)));
@@ -199,7 +201,7 @@
 
   // Grundwerte der Linse, so wie im glisse-Beispiel <Glass style={{ "--lg-glass-bend": 0.76, ... }} />.
   // Pro Element lassen sie sich mit denselben CSS-Variablen ändern: --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine.
-  const LENS = { bend: 0.76, dispersion: 0.15, blur: 0, shine: 0.22 };
+  const LENS = { bend: 0.76, dispersion: 0.15, blur: 0, shine: 0.22, frost: 3 };
 
   // Was Glas bekommt. level 0 = Grundfläche, level 1 = liegt auf Glas und bricht die Fläche darunter.
   // top: Fläche liegt über dem Inhalt (Fotokarten, dort zeigt sich nur Rand und Glanz).
@@ -442,7 +444,7 @@
     it.cache = {
       light: light, w: w, h: h, rad: Math.min(rad, Math.min(w, h) / 2),
       bend: lens('--lg-glass-bend', LENS.bend), disp: lens('--lg-glass-dispersion', LENS.dispersion),
-      blur: lens('--lg-blur', LENS.blur), shine: lens('--lg-rim-shine', LENS.shine),
+      blur: lens('--lg-blur', LENS.blur), shine: lens('--lg-rim-shine', LENS.shine), frost: lens('--gl-frost', LENS.frost),
       body: b.length ? b[0] : 1,
       bodyCol: bc || (light ? [1, 1, 1, 0.20] : [0.157, 0.157, 0.157, 0.60]),
       tint: rgbaVar(cs.getPropertyValue('--gl-tint')),
@@ -466,7 +468,6 @@
       cs = getComputedStyle(kb);
       const m = /url\(["']?(.*?)["']?\)/.exec(cs.backgroundImage);
       if (m) loadImage(m[1]);
-      if (!G.imgReady) return;
     }
     const kr = kb ? kb.getBoundingClientRect() : null, hr = hero ? hero.getBoundingClientRect() : null;
     const light = document.documentElement.getAttribute('data-theme') === 'light';
@@ -514,7 +515,7 @@
       const posx = cs.backgroundPositionX.indexOf('%') > 0 ? parseFloat(cs.backgroundPositionX) / 100 : 0.5;
       gl.uniform2f(u.uPos, posx, pos);
       gl.uniform4f(u.uHero, ho[0], ho[1], ho[2], ho[3]);
-      gl.uniform1f(u.uHeroOp, parseFloat(getComputedStyle(hero).opacity) || 0);
+      gl.uniform1f(u.uHeroOp, G.imgReady ? (parseFloat(getComputedStyle(hero).opacity) || 0) : 0);
       const bf = hero.querySelector('.bot-fade'), tf = hero.querySelector('.top-fade');
       gl.uniform1f(u.uFadeH, bf ? bf.getBoundingClientRect().height || 150 : 150);
       gl.uniform1f(u.uTopH, tf ? tf.getBoundingClientRect().height || 150 : 150);
@@ -569,6 +570,7 @@
         gl.uniform1f(gu.uDisp, pr.disp);
         gl.uniform1f(gu.uBlur, pr.blur);
         gl.uniform1f(gu.uShine, pr.shine);
+        gl.uniform1f(gu.uFrost, pr.frost);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         if (!copy) return;
         // jedes Glas sofort in die eigene Fläche kopieren: sie bewegt sich mit dem Element, auch beim Überscrollen.
