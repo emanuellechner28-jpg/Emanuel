@@ -1324,3 +1324,10 @@ html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-shadow: 0 1px 3p
 :root, html[data-theme="light"] { --gl-veil: 255 255 255 .06; }
 .nav-pill.gl-el, html[data-theme="light"] .nav-pill.gl-el { --gl-body-col: 255 255 255 .12; }
 .vs-thumb b.gl-el { --gl-body-col: 255 255 255 .10; }
+
+/* Titelbild wieder als Foto (Höhe wie zuvor) */
+.hero { height: max(560px, 70vh); }
+.hero .bot-fade { height: 260px; }
+html[data-theme="light"] .hero .bot-fade { height: 300px; }
+.hero .kb { background-position: 50% 42%; }
+html[data-theme="light"] .hero .kb { filter: none; }

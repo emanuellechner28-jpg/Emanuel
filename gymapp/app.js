@@ -7,6 +7,7 @@ const ST = window.GymStore;
 
 // Fotos (im Einzeldatei-Build stehen hier eingebettete Bilder)
 const IMG = {
+  main: 'img/main.jpg',
   fruehnebel: 'img/fruehnebel.jpg',
   sonnenaufgang: 'img/sonnenaufgang.jpg',
   mittag: 'img/mittag.jpg',
@@ -15,6 +16,7 @@ const IMG = {
   polarlicht: 'img/polarlicht.jpg'
 };
 const IMG_D = {
+  main: 'img/d_main.jpg',
   fruehnebel: 'img/d_fruehnebel.jpg',
   sonnenaufgang: 'img/d_sonnenaufgang.jpg',
   mittag: 'img/d_mittag.jpg',
@@ -445,7 +447,7 @@ function renderHome() {
   screens.home.innerHTML = `
     <div class="bgfx bg-home"></div>
     <div class="hero" role="img" aria-label="Dämmerung an einem Bergsee, gerahmt von dunklen Tannen">
-      <div class="plx"><div class="kb" style="background-image:url('${heroArt().url}')"></div><div class="mist"></div></div><div class="top-fade"></div><div class="bot-fade"></div>
+      <div class="plx"><div class="kb" style="background-image:url('${imgOf('main')}')"></div><div class="mist"></div></div><div class="top-fade"></div><div class="bot-fade"></div>
     </div>
     <div class="scroll">
       <div class="head sticky">
@@ -499,7 +501,6 @@ function renderHome() {
     </div>`;
   setupMotion(screens.home);
   bindScroll(screens.home);
-  { const kb = screens.home.querySelector('.hero .kb'); if (kb) kb.__glImg = heroArt().canvas; }
   glassOn(screens.home);
   screens.home.querySelectorAll('.tile, .start-btn').forEach(springPress);
 }
@@ -1245,7 +1246,7 @@ function renderOnb() {
   } else if (key === 'theme') {
     const th = S.settings.theme || 'dark';
     body = `<h2>Hell oder dunkel?</h2>
-      <div class="themes">${[['dark', 'Dunkel', 'Ruhige Abendfarben', heroArt('dark').url], ['light', 'Hell', 'Helle Pastellfarben', heroArt('light').url], ['auto', 'Automatisch', 'Wie dein Handy', '']].map((a) => `<button class="theme-card${th === a[0] ? ' sel' : ''}${a[0] === 'auto' ? ' auto' : ''}" type="button" data-act="onb-theme" data-v="${a[0]}" ${a[3] ? `style="background-image:url('${a[3]}')"` : ''}><span class="tc-tx"><b>${a[1]}</b><span>${a[2]}</span></span><span class="tc-ck">${ICON_CHECK}</span></button>`).join('')}</div>
+      <div class="themes">${[['dark', 'Dunkel', 'Wald am Abend', 'img/d_main.jpg'], ['light', 'Hell', 'Schneelandschaft', 'img/main.jpg'], ['auto', 'Automatisch', 'Wie dein Handy', '']].map((a) => `<button class="theme-card${th === a[0] ? ' sel' : ''}${a[0] === 'auto' ? ' auto' : ''}" type="button" data-act="onb-theme" data-v="${a[0]}" ${a[3] ? `style="background-image:url('${a[3]}')"` : ''}><span class="tc-tx"><b>${a[1]}</b><span>${a[2]}</span></span><span class="tc-ck">${ICON_CHECK}</span></button>`).join('')}</div>
       <p class="lead under">Du kannst das später in den Einstellungen ändern.</p>${next()}`;
   } else if (key === 'fit') {
     body = `<h2>Wie fit bist du?</h2>${sliderHTML('fit', onb.fit)}<p class="lead under">Daraus ergibt sich dein Tagesziel. Du kannst es später in den Einstellungen ändern. Ehrlich schätzen lohnt sich: Ein zu hohes Ziel frustriert, ein zu niedriges bringt wenig.</p>${next()}`;
