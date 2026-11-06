@@ -1331,3 +1331,12 @@ html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-shadow: 0 1px 3p
 html[data-theme="light"] .hero .bot-fade { height: 300px; }
 .hero .kb { background-position: 50% 42%; }
 html[data-theme="light"] .hero .kb { filter: none; }
+
+/* ===== Ganz durchsichtig, kein Frost: weder Füllung noch Weichzeichner, nur Brechung, Rand und Schatten ===== */
+:root, html[data-theme="light"] { --gl-veil: 255 255 255 0; }
+.gl-el, html[data-theme="light"] .gl-el { --gl-body: 0; --gl-frost: 0; }
+.switch.gl-el, .tile.on.gl-el, .extile.sel.gl-el, .plan-opt.sel.gl-el, .switch.on.gl-el, .rchip.cur.gl-el, .buy-panel.gl-el, .nav-pill.gl-el, html[data-theme="light"] .nav-pill.gl-el { --gl-body: 0; --gl-body-col: 255 255 255 0; }
+#app .gl-el:not(.theme-card), #app .buy-panel.gl-el, #app #nav.gl-el.gl-keep { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* Nur die untere Leiste behält einen leichten Blur: sonst liegt Text von der Seite durch die Beschriftung der Leiste */
+#app #nav.gl-el.gl-keep { -webkit-backdrop-filter: blur(9px) !important; backdrop-filter: blur(9px) !important; }
