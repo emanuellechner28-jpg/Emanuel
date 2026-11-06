@@ -1309,3 +1309,13 @@ html[data-theme="light"] #nav.gl-el { --gl-body: .22; }
 .nav-pill.gl-el { --gl-body: .26; --gl-body-col: 255 255 255 .50; --gl-shadow: 0 1px 3px rgba(0,0,0,.22), 0 12px 20px -10px rgba(0,0,0,.46); }
 html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-shadow: 0 1px 3px rgba(40,50,70,.14), 0 12px 20px -10px rgba(40,50,70,.34); }
 #app .nav-pill.gl-el { box-shadow: var(--gl-shadow) !important; }
+
+/* ===== 100 % durchsichtig: keine Füllung, nur Blur, Brechung am Rand und Tiefe ===== */
+.gl-el, html[data-theme="light"] .gl-el { --gl-body: 0; }
+.gl-el.tile, .gl-el.round-btn, .gl-el.start-btn, .gl-el.balance, .gl-el.rchip, .gl-el.hold, .gl-el.actbtn, .stepper button.gl-el { --gl-body: 0; }
+.switch.gl-el { --gl-body: .35; }
+.tile.on.gl-el, .extile.sel.gl-el, .plan-opt.sel.gl-el, .switch.on.gl-el, .rchip.cur.gl-el { --gl-body: .45; }
+.buy-panel.gl-el { --gl-body: .35; }
+.vs-thumb b.gl-el { --gl-body: 0; }
+#nav.gl-el, html[data-theme="light"] #nav.gl-el, .gl-el.gl-top { --gl-body: 0; }
+.nav-pill.gl-el, html[data-theme="light"] .nav-pill.gl-el { --gl-body: .10; }
