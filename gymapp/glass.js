@@ -160,9 +160,8 @@
       col = mix(col, uBodyCol.rgb, uBodyCol.a);
       col = mix(col, uTint.rgb, uTint.a);
 
-      // sanfte Wölbung (Tropfen), Licht von links oben
+      // Licht von links oben. Wie bei Apple: innen bleibt das Glas ruhig und klar, das Licht sammelt sich an der Kante.
       vec2 L = normalize(uL);
-      float td = clamp(1.0 - e / (mn * 0.5), 0.0, 1.0);
       vec2 nrm;
       {
         float qx = abs(q.x) - hw + rad, qy = abs(q.y) - hh + rad;
@@ -170,26 +169,15 @@
         else if (qx > qy) nrm = vec2(sign(q.x), 0.0);
         else nrm = vec2(0.0, sign(q.y));
       }
-      float dome = dot(nrm, L) * pow(td, 1.4);
-      col += vec3(max(dome, 0.0) * 0.015);
-      col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.30 : 0.26);
-
-      // Kante: feine Linie, darüber das Licht am Rand (links/oben direkt, rechts/unten gespiegelt)
       float facing = abs(nrm.x + nrm.y);
-      float along = e / (1.3 * sqrt(max(1.0, facing)));
-      float shine = uShine;
-      float rim = along < 1.0 ? shine * pow(min(1.0, facing), 1.5) * (1.0 - pow(along, 1.5)) : 0.0;
-      // weiches Licht etwas weiter innen, nur auf der Lichtseite
-      float soft = smoothstep(0.0, 4.0, e) * smoothstep(14.0, 2.0, e) * max(dot(nrm, L), 0.0) * 0.05;
-      // Glanzpunkt: kleiner heller Fleck auf der Lichtseite (Fenster-Spiegelung im Tropfen)
-      vec2 spq = q - vec2(L.x * hw * 0.6, -hh + min(11.0, hh * 0.3));   // am oberen Rand, zur Lichtseite hin
-      vec2 ssz = vec2(clamp(hw * 0.45, 5.0, 38.0), clamp(hh * 0.16, 2.5, 6.0));
-      float spec = exp(-dot(spq / ssz, spq / ssz)) * smoothstep(2.0, 6.0, e) * 0.58;
-      // Lichtbogen: das Licht sammelt sich innen am Rand gegenüber (Tropfen als Linse)
-      float caust = smoothstep(2.0, 9.0, e) * smoothstep(30.0, 8.0, e) * max(dot(nrm, -L), 0.0);
-      col += vec3(caust * (uLight > 0.5 ? 0.10 : 0.16));
-      float edgeLine = smoothstep(1.1, 0.15, e) * (0.40 + 0.40 * max(dot(nrm, L), 0.0));
-      float hi = clamp(rim + soft + spec + edgeLine, 0.0, 1.0);
+      float f2 = min(facing, 1.0);
+      float lit = max(dot(nrm, L), 0.0);
+      float k = uShine / 0.22;
+      // Lichtkante: hauchdünn, auf der Lichtseite am hellsten, an den übrigen Ecken schwächer
+      float edgeLine = smoothstep(1.25, 0.1, e) * (0.22 + 0.55 * f2 * f2 + 0.25 * lit) * k;
+      // feiner Schein innen an der Kante
+      float glow = smoothstep(9.0, 0.0, e) * (0.04 + 0.10 * lit + 0.05 * f2 * f2) * k;
+      float hi = clamp(edgeLine + glow, 0.0, 1.0);
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
