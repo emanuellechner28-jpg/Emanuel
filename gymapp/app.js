@@ -7,7 +7,6 @@ const ST = window.GymStore;
 
 // Fotos (im Einzeldatei-Build stehen hier eingebettete Bilder)
 const IMG = {
-  main: 'img/main.jpg',
   fruehnebel: 'img/fruehnebel.jpg',
   sonnenaufgang: 'img/sonnenaufgang.jpg',
   mittag: 'img/mittag.jpg',
@@ -16,7 +15,6 @@ const IMG = {
   polarlicht: 'img/polarlicht.jpg'
 };
 const IMG_D = {
-  main: 'img/d_main.jpg',
   fruehnebel: 'img/d_fruehnebel.jpg',
   sonnenaufgang: 'img/d_sonnenaufgang.jpg',
   mittag: 'img/d_mittag.jpg',
@@ -26,6 +24,56 @@ const IMG_D = {
 };
 const isLightTheme = () => document.documentElement.getAttribute('data-theme') === 'light';
 const imgOf = (k) => (isLightTheme() ? IMG : IMG_D)[k];
+
+/* ---------- Titelbild der Startseite: Farbverlauf statt Foto ----------
+ * Wird einmal pro Design und Tageszeit auf ein Canvas gezeichnet. Dieselben Pixel liegen im CSS (Data-URL)
+ * und im Glas-Hintergrund (glass.js nimmt das Canvas direkt), darum bricht das Glas genau das, was man sieht.
+ * Pro Verlauf: Grundfarbe oben und unten, dazu Farbflecken [x, y, Radius (Anteil der Breite), r, g, b, Deckkraft]. */
+const HERO_ART = {
+  dark: {
+    morning: { base: ['#1C2536', '#0E1117'], blobs: [[.15, .85, .95, 255, 170, 90, .55], [.9, .55, .7, 240, 120, 120, .28], [.7, .08, .8, 110, 140, 200, .30]] },
+    day: { base: ['#162A38', '#0D141A'], blobs: [[.2, .2, .95, 70, 170, 190, .38], [.85, .7, .85, 90, 120, 210, .32], [.5, .98, .6, 200, 220, 230, .14]] },
+    evening: { base: ['#241A33', '#0F0D16'], blobs: [[.2, .9, .95, 255, 140, 70, .55], [.85, .45, .85, 220, 90, 150, .38], [.5, .05, .85, 120, 90, 200, .35]] },
+    night: { base: ['#101828', '#07090E'], blobs: [[.3, .15, .95, 70, 90, 200, .40], [.8, .8, .85, 60, 170, 170, .22], [.1, .7, .7, 120, 80, 180, .22]] }
+  },
+  light: {
+    morning: { base: ['#E6EEF9', '#F6EFEA'], blobs: [[.15, .72, .95, 255, 175, 130, .80], [.88, .25, .85, 140, 190, 250, .75], [.8, .9, .65, 205, 170, 240, .55]] },
+    day: { base: ['#E2EFF9', '#F1F6F9'], blobs: [[.2, .2, .95, 120, 185, 245, .80], [.85, .65, .85, 150, 220, 205, .65], [.4, .95, .65, 255, 215, 150, .55]] },
+    evening: { base: ['#F4E8EE', '#F3F1F6'], blobs: [[.2, .72, .95, 250, 150, 150, .78], [.88, .3, .85, 175, 150, 240, .75], [.6, .95, .65, 255, 190, 130, .65]] },
+    night: { base: ['#E6EAF5', '#F1F2F7'], blobs: [[.25, .22, .95, 130, 150, 240, .78], [.85, .7, .85, 195, 160, 240, .65], [.5, .95, .65, 160, 210, 240, .60]] }
+  }
+};
+const heroCache = {};
+function heroSlot(t) { const h = new Date(t).getHours(); return h >= 5 && h < 11 ? 'morning' : h >= 11 && h < 17 ? 'day' : h >= 17 && h < 22 ? 'evening' : 'night'; }
+function heroArt(theme) {
+  const th = theme || (isLightTheme() ? 'light' : 'dark');
+  const slot = heroSlot(Date.now());
+  const key = th + '-' + slot;
+  if (heroCache[key]) return heroCache[key];
+  const W = 512, H = 800;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const p = HERO_ART[th][slot];
+  const lin = x.createLinearGradient(0, 0, 0, H);
+  lin.addColorStop(0, p.base[0]); lin.addColorStop(1, p.base[1]);
+  x.fillStyle = lin; x.fillRect(0, 0, W, H);
+  p.blobs.forEach((b) => {
+    const cx = b[0] * W, cy = b[1] * H, r = b[2] * W;
+    const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, `rgba(${b[3]},${b[4]},${b[5]},${b[6]})`);
+    g.addColorStop(1, `rgba(${b[3]},${b[4]},${b[5]},0)`);
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+  });
+  // feines Rauschen gegen Streifen in sanften Verläufen
+  try {
+    const im = x.getImageData(0, 0, W, H), d = im.data;
+    for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - 0.5) * 4; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+    x.putImageData(im, 0, 0);
+  } catch (e) { /* ohne Rauschen weiter */ }
+  heroCache[key] = { canvas: cv, url: cv.toDataURL('image/jpeg', 0.95) };
+  return heroCache[key];
+}
 const PHOTO_POS = { fruehnebel: '50% 58%', sonnenaufgang: '50% 46%', mittag: '50% 50%', abendrot: '50% 50%', sternennacht: '50% 45%', polarlicht: '50% 45%' };
 
 // MediaPipe wird beim Start der Kamera nachgeladen (braucht Internet).
@@ -397,7 +445,7 @@ function renderHome() {
   screens.home.innerHTML = `
     <div class="bgfx bg-home"></div>
     <div class="hero" role="img" aria-label="Dämmerung an einem Bergsee, gerahmt von dunklen Tannen">
-      <div class="plx"><div class="kb" style="background-image:url('${imgOf('main')}')"></div><div class="mist"></div></div><div class="top-fade"></div><div class="bot-fade"></div>
+      <div class="plx"><div class="kb" style="background-image:url('${heroArt().url}')"></div><div class="mist"></div></div><div class="top-fade"></div><div class="bot-fade"></div>
     </div>
     <div class="scroll">
       <div class="head sticky">
@@ -451,6 +499,7 @@ function renderHome() {
     </div>`;
   setupMotion(screens.home);
   bindScroll(screens.home);
+  { const kb = screens.home.querySelector('.hero .kb'); if (kb) kb.__glImg = heroArt().canvas; }
   glassOn(screens.home);
   screens.home.querySelectorAll('.tile, .start-btn').forEach(springPress);
 }
@@ -1196,7 +1245,7 @@ function renderOnb() {
   } else if (key === 'theme') {
     const th = S.settings.theme || 'dark';
     body = `<h2>Hell oder dunkel?</h2>
-      <div class="themes">${[['dark', 'Dunkel', 'Wald am Abend', 'img/d_main.jpg'], ['light', 'Hell', 'Schneelandschaft', 'img/main.jpg'], ['auto', 'Automatisch', 'Wie dein Handy', '']].map((a) => `<button class="theme-card${th === a[0] ? ' sel' : ''}${a[0] === 'auto' ? ' auto' : ''}" type="button" data-act="onb-theme" data-v="${a[0]}" ${a[3] ? `style="background-image:url('${a[3]}')"` : ''}><span class="tc-tx"><b>${a[1]}</b><span>${a[2]}</span></span><span class="tc-ck">${ICON_CHECK}</span></button>`).join('')}</div>
+      <div class="themes">${[['dark', 'Dunkel', 'Ruhige Abendfarben', heroArt('dark').url], ['light', 'Hell', 'Helle Pastellfarben', heroArt('light').url], ['auto', 'Automatisch', 'Wie dein Handy', '']].map((a) => `<button class="theme-card${th === a[0] ? ' sel' : ''}${a[0] === 'auto' ? ' auto' : ''}" type="button" data-act="onb-theme" data-v="${a[0]}" ${a[3] ? `style="background-image:url('${a[3]}')"` : ''}><span class="tc-tx"><b>${a[1]}</b><span>${a[2]}</span></span><span class="tc-ck">${ICON_CHECK}</span></button>`).join('')}</div>
       <p class="lead under">Du kannst das später in den Einstellungen ändern.</p>${next()}`;
   } else if (key === 'fit') {
     body = `<h2>Wie fit bist du?</h2>${sliderHTML('fit', onb.fit)}<p class="lead under">Daraus ergibt sich dein Tagesziel. Du kannst es später in den Einstellungen ändern. Ehrlich schätzen lohnt sich: Ein zu hohes Ziel frustriert, ein zu niedriges bringt wenig.</p>${next()}`;

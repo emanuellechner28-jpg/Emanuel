@@ -61,10 +61,6 @@
       vec2 uv = (p - uKb.xy - off) / dsz;
       float inKb = step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
       vec3 img = texture2D(uImg, clamp(uv, 0.001, 0.999)).rgb;
-      if (uLight > 0.5) {
-        float l = dot(img, vec3(0.299, 0.587, 0.114));
-        img = mix(vec3(l), img, 0.45) * 1.18;
-      }
       float bt = clamp((p.y - (uHero.y + uHero.w - uFadeH)) / uFadeH, 0.0, 1.0);
       img = mix(img, uBg, clamp(bt / uFadeStop, 0.0, 1.0));
       float tt = clamp((p.y - uHero.y) / uTopH, 0.0, 1.0);
@@ -347,6 +343,18 @@
     im.src = url;
   }
 
+  // Foto als fertiges Canvas (der Farbverlauf der Startseite): direkt als Textur, ohne Umweg über eine URL
+  function loadSource(cv) {
+    if (G.imgUrl === cv) return;
+    G.imgUrl = cv;
+    const gl = G.gl;
+    gl.bindTexture(gl.TEXTURE_2D, G.img);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+    imgParams(gl);
+    G.imgSize = [cv.width, cv.height]; G.imgReady = true; G.sig = ''; G.sceneKey = '';
+  }
+
   function resize(w, h) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const pw = Math.max(1, Math.round(w * dpr)), ph = Math.max(1, Math.round(h * dpr));
@@ -466,8 +474,8 @@
     let cs = null;
     if (kb) {
       cs = getComputedStyle(kb);
-      const m = /url\(["']?(.*?)["']?\)/.exec(cs.backgroundImage);
-      if (m) loadImage(m[1]);
+      if (kb.__glImg) loadSource(kb.__glImg);
+      else { const m = /url\(["']?(.*?)["']?\)/.exec(cs.backgroundImage); if (m) loadImage(m[1]); }
     }
     const kr = kb ? kb.getBoundingClientRect() : null, hr = hero ? hero.getBoundingClientRect() : null;
     const light = document.documentElement.getAttribute('data-theme') === 'light';
@@ -494,7 +502,7 @@
     // Szene: Hintergrund. Er hängt nur von Seite, Foto und Design ab, nicht von den Glas-Elementen:
     // beim Scrollen bleibt er (außer dem Foto der Startseite) gleich und wird nicht neu gezeichnet.
     const rs = getComputedStyle(document.documentElement);
-    const sceneKey = [root.id, ro.width, ro.height, light, kr ? [kr.left, kr.top, kr.width, kr.height, hr.height, hero.style.opacity, getComputedStyle(hero).opacity].join() : '', G.imgUrl, G.imgReady].join(';');
+    const sceneKey = [root.id, ro.width, ro.height, light, kr ? [kr.left, kr.top, kr.width, kr.height, hr.height, hero.style.opacity, getComputedStyle(hero).opacity].join() : '', (typeof G.imgUrl === 'string' ? G.imgUrl : 'canvas'), G.imgReady].join(';');
     if (sceneKey !== G.sceneKey) {
     G.sceneKey = sceneKey;
     const bgA = color(rs.getPropertyValue('--bg-a').trim() || '#0f1013', [.06, .06, .07]);
@@ -533,7 +541,6 @@
     gl.uniform1f(u.uFadeStop, light ? 0.78 : 0.92);
     gl.uniform1f(u.uTopA, light ? 0.8 : 0.62);
     if (light) gl.uniform3f(u.uTopCol, 240 / 255, 243 / 255, 247 / 255); else gl.uniform3f(u.uTopCol, 10 / 255, 11 / 255, 13 / 255);
-    gl.uniform1f(u.uLight, light ? 1 : 0);
     // Lichtflecken der Seite (z. B. die warmen und kühlen Wolken im Hintergrund)
     const gls = sceneOf(root, ro, light).glows;
     [0, 1, 2].forEach((i) => {
