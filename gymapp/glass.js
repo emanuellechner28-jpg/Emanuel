@@ -174,15 +174,15 @@
       float lit = max(dot(nrm, L), 0.0);
       float k = uShine / 0.22;
       // Lichtkante: hauchdünn, auf der Lichtseite am hellsten, an den übrigen Ecken schwächer
-      float edgeLine = smoothstep(1.25, 0.1, e) * (0.22 + 0.55 * f2 * f2 + 0.25 * lit) * k;
+      float edgeLine = smoothstep(1.1, 0.1, e) * (0.10 + 0.22 * f2 * f2 + 0.12 * lit) * k;
       // feiner Schein innen an der Kante
-      float glow = smoothstep(9.0, 0.0, e) * (0.04 + 0.10 * lit + 0.05 * f2 * f2) * k;
+      float glow = smoothstep(6.0, 0.0, e) * (0.006 + 0.014 * lit) * k;
       float hi = clamp(edgeLine + glow, 0.0, 1.0);
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
       float bodyA = clamp(uBody + band * 0.22, 0.0, 1.0);
-      vec3 pre = (1.0 - hi) * (col * bodyA) + hi * vec3(1.0);
+      vec3 pre = (1.0 - hi) * (col * bodyA) + hi * mix(vec3(1.0), col, 0.45);   // Kantenlicht nimmt die Farbe dahinter an, kein reines Weiß
       float alpha = hi + (1.0 - hi) * bodyA;
       pre *= 1.0 - uPress * 0.08;
       pre += (hash(floor(p * 1.5)) - 0.5) * 0.010 * bodyA;
