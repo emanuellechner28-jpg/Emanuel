@@ -177,7 +177,7 @@
       float edgeLine = smoothstep(1.1, 0.1, e) * (0.10 + 0.22 * f2 * f2 + 0.12 * lit) * k;
       // feiner Schein innen an der Kante
       float glow = smoothstep(6.0, 0.0, e) * (0.006 + 0.014 * lit) * k;
-      float hi = clamp(edgeLine + glow, 0.0, 1.0);
+      float hi = 0.0;   // keine helle Kantenlinie mehr
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
@@ -191,7 +191,7 @@
       float sheen = smoothstep(0.45, -1.0, qn.y) * 0.07 * smoothstep(0.0, 12.0, e);   // weicher Glanz im oberen Teil
       float caust = smoothstep(2.0, 9.0, e) * smoothstep(28.0, 7.0, e) * dark;        // Licht sammelt sich innen gegenüber
       float shA = clamp(bev * dark * 0.26 + max(-dome, 0.0) * 0.07 * smoothstep(0.0, 16.0, e), 0.0, 0.4) * (uLight > 0.5 ? 0.65 : 1.0);
-      float whA = clamp(bev * lit * 0.12 + max(dome, 0.0) * 0.035 + sheen + caust * 0.10, 0.0, 0.35);
+      float whA = clamp(max(dome, 0.0) * 0.035 + sheen, 0.0, 0.35);   // Glanz nur im Inneren, nicht am Rand
 
       vec3 pre = col * bodyA;
       float alpha = bodyA;
