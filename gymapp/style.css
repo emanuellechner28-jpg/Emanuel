@@ -1295,3 +1295,17 @@ html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-body-col: 255 25
 .vs-thumb b.gl-el { --gl-body: .26; --gl-body-col: 255 255 255 .50; }
 .btn-grad.gl-el, .seg button.on.gl-el { --gl-tint: 60 72 100 .55; }
 html[data-theme="light"] .btn-grad.gl-el, html[data-theme="light"] .seg button.on.gl-el { --gl-tint: 25 35 55 .68; }
+
+/* ===== Untere Leiste: gleicher Glas-Look wie die Karten ===== */
+#app #nav.gl-el.gl-keep {
+  background: transparent !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important; backdrop-filter: blur(20px) saturate(1.6) !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,.22), 0 28px 46px -20px rgba(0,0,0,.52) !important;
+}
+html[data-theme="light"] #app #nav.gl-el.gl-keep { box-shadow: 0 2px 5px rgba(40,50,70,.14), 0 28px 46px -22px rgba(40,50,70,.36) !important; }
+#nav.gl-el { --gl-body: .16; --gl-shadow: none; }
+html[data-theme="light"] #nav.gl-el { --gl-body: .22; }
+/* gleitende Pille: wie die kleinen Knöpfe, dichter als die Leiste */
+.nav-pill.gl-el { --gl-body: .26; --gl-body-col: 255 255 255 .50; --gl-shadow: 0 1px 3px rgba(0,0,0,.22), 0 12px 20px -10px rgba(0,0,0,.46); }
+html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-shadow: 0 1px 3px rgba(40,50,70,.14), 0 12px 20px -10px rgba(40,50,70,.34); }
+#app .nav-pill.gl-el { box-shadow: var(--gl-shadow) !important; }

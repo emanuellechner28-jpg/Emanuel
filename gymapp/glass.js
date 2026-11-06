@@ -139,7 +139,7 @@
       float e = max(-d, 0.0);
 
       // Linse: am Rand zeigt das Glas Inhalt von weiter innen (Wölbung einer flachen Kuppel)
-      float depth = min(0.25 * mn, 34.0);      // Breite des gewölbten Rands: bei großen Karten nur ein schmaler Streifen
+      float depth = min(0.25 * mn, 44.0);      // Breite des gewölbten Rands: bei großen Karten nur ein schmaler Streifen
       float sag = max(0.01, min(0.5 * mn, min(hw, hh) - 1.0));
       float Rx, sx, Ry, sy;
       arc(sag, hw, Rx, sx); arc(sag, hh, Ry, sy);
@@ -147,7 +147,7 @@
       float iw = max(0.0, hw - depth), ih = max(0.0, hh - depth);
       float ir = clamp(rad, 0.0, min(iw, ih));
       float fo = 0.5 * (1.0 + tanhf(1.7724538509 * sdf(q, vec2(iw, ih) - ir, ir) / (depth * 1.41421)));
-      vec2 pull = clamp(pullDir * fo, -1.0, 1.0) * uBend * min(mn, 84.0);   // große Karten verzerren nicht stärker als mittlere
+      vec2 pull = clamp(pullDir * fo, -1.0, 1.0) * uBend * min(mn, 90.0);   // große Karten verzerren nicht stärker als mittlere
 
       // Farbaufspaltung wie bei glisse: Rot biegt am weitesten, Blau am wenigsten
       vec3 col;
@@ -181,7 +181,7 @@
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
-      float bodyA = clamp(uBody + band * 0.22, 0.0, 1.0);
+      float bodyA = clamp(uBody + band * 0.36, 0.0, 1.0);
 
       // Dicke und Wölbung: Schicht für Schicht über das Glas gelegt (so bleibt auch durchsichtiges Glas dreidimensional)
       vec2 qn = q / vec2(hw, hh);
@@ -206,7 +206,7 @@
 
   // Grundwerte der Linse, so wie im glisse-Beispiel <Glass style={{ "--lg-glass-bend": 0.76, ... }} />.
   // Pro Element lassen sie sich mit denselben CSS-Variablen ändern: --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine.
-  const LENS = { bend: 0.76, dispersion: 0.30, blur: 0, shine: 0.22, frost: 3 };
+  const LENS = { bend: 1.1, dispersion: 0.75, blur: 0, shine: 0.22, frost: 3 };
 
   // Was Glas bekommt. level 0 = Grundfläche, level 1 = liegt auf Glas und bricht die Fläche darunter.
   // top: Fläche liegt über dem Inhalt (Fotokarten, dort zeigt sich nur Rand und Glanz).
