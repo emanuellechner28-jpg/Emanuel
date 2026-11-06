@@ -1348,3 +1348,13 @@ html[data-theme="light"] .hero .kb { filter: none; }
 /* ===== Nur Bend: kein Schatten, keine Kantenlinie, keine Farbspaltung ===== */
 #app .gl-el, #app .gl-el.gl-keep, #app .nav-pill.gl-el, #app .vs-thumb b.gl-el, #app .gcard, #app #nav.gl-el.gl-keep, html[data-theme="light"] #app #nav.gl-el.gl-keep, html[data-theme="light"] #screen-home.gl-on .gcard { box-shadow: none !important; }
 .gl-el { --gl-shadow: none; --lg-glass-dispersion: 0; --lg-rim-shine: 0; }
+
+/* ===== Hellmodus: ebenfalls komplett durchsichtig (keine Füllung, keine grauen Schatten, keine Tönung) ===== */
+html[data-theme="light"] #app .gl-el, html[data-theme="light"] #app #screen-home.gl-on .gl-el, html[data-theme="light"] #screen-home.gl-on .tile, html[data-theme="light"] #screen-home.gl-on .start-btn, html[data-theme="light"] #screen-home.gl-on .card.glass, html[data-theme="light"] #screen-home.gl-on .gcard-in, html[data-theme="light"] #screen-home.gl-on .gcard { box-shadow: none !important; }
+html[data-theme="light"] .gl-el { --gl-body: 0; --gl-body-col: 255 255 255 0; --gl-tint: 0 0 0 0; --gl-tint-on: 0 0 0 0; }
+html[data-theme="light"] .btn-grad.gl-el, html[data-theme="light"] .seg button.on.gl-el, html[data-theme="light"] .rchip.cur.gl-el { --gl-tint: 0 0 0 0; --gl-tint-on: 0 0 0 0; --gl-body: 0; color: #14161A; }
+html[data-theme="light"] .switch.gl-el::after { background: #14161A !important; }
+
+/* Specificity hochgezogen, damit keine ältere Regel den Schatten zurückholt (hell und dunkel) */
+html #app .gl-el.gl-el.gl-el.gl-el.gl-el:not(.gl-keep), html #app .nav-pill.gl-el.gl-el.gl-el.gl-el, html #app #nav.gl-el.gl-el.gl-el { box-shadow: none !important; }
+html[data-theme="light"] #app .gl-el.gl-el.gl-el.gl-el.gl-el { box-shadow: none !important; }
