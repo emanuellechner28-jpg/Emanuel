@@ -1319,3 +1319,8 @@ html[data-theme="light"] .nav-pill.gl-el { --gl-body: .30; --gl-shadow: 0 1px 3p
 .vs-thumb b.gl-el { --gl-body: 0; }
 #nav.gl-el, html[data-theme="light"] #nav.gl-el, .gl-el.gl-top { --gl-body: 0; }
 .nav-pill.gl-el, html[data-theme="light"] .nav-pill.gl-el { --gl-body: .10; }
+
+/* Randstreifen (Brechung) ohne weiße Füllfarbe: er zeigt nur die Farben des Hintergrunds */
+:root, html[data-theme="light"] { --gl-veil: 255 255 255 .06; }
+.nav-pill.gl-el, html[data-theme="light"] .nav-pill.gl-el { --gl-body-col: 255 255 255 .12; }
+.vs-thumb b.gl-el { --gl-body-col: 255 255 255 .10; }
