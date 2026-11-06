@@ -1183,3 +1183,64 @@ html[data-theme="light"] #nav { background: rgba(255,255,255,.14) !important; bo
 html[data-theme="light"] .nav-pill { background: linear-gradient(160deg, rgba(255,255,255,.7), rgba(255,255,255,.3) 60%, rgba(255,255,255,.5)) !important;
   box-shadow: inset 1.5px 1.5px 1px -1px #fff, 0 8px 16px -8px rgba(40,50,70,.35) !important; }
 #screen-home .tile > .gl-surface, #screen-home .gcard-in > .gl-surface, #screen-home .start-btn > .gl-surface, #screen-home .card > .gl-surface { position: absolute !important; z-index: -1 !important; }
+
+/* ===== Glas überall (WebGL aus glass.js, hell und dunkel) =====
+   glass.js legt in jedes Glas-Element eine Fläche (.gl-surface) und markiert es mit .gl-el.
+   Dann entfällt der CSS-Hintergrund, Rahmen und Blur des Elements; Schatten bleiben im CSS.
+   Feinheiten pro Element über Variablen: --gl-body (0 bis 1), --gl-body-col, --gl-tint, --gl-tint-on
+   und wie bei glisse --lg-glass-bend, --lg-glass-dispersion, --lg-blur, --lg-rim-shine. */
+.gl-surface.top { z-index: 3; }
+.gl-el { isolation: isolate; --gl-shadow: 0 16px 26px -16px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.22); }
+#app .gl-el:not(.gl-keep) { background: transparent !important; border-color: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+#app .gl-el:not(.gl-keep):not(.gl-top) { box-shadow: var(--gl-shadow) !important; }
+#app .gl-el.sel:not(.gl-top) { box-shadow: 0 0 0 1.5px var(--ring), 0 0 0 5px var(--ring2), var(--gl-shadow) !important; }
+#app .extile.gl-el.sel { box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px rgba(var(--acc-rgb),.22), var(--gl-shadow) !important; }
+html[data-theme="light"] .gl-el { --gl-shadow: 0 16px 26px -16px rgba(40,50,70,.38), 0 2px 6px rgba(40,50,70,.12); }
+/* kleine Bedienelemente: engerer Schatten */
+.gl-el.round-btn, .gl-el.switch, .gl-el.actbtn, .gl-el.hold, .gl-el.rchip, .gl-el.balance, .gl-el.btn-grad, .stepper button.gl-el, .seg button.gl-el, .segpair button.gl-el { --gl-shadow: 0 7px 12px -7px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.25); }
+html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switch, html[data-theme="light"] .gl-el.actbtn, html[data-theme="light"] .gl-el.hold, html[data-theme="light"] .gl-el.rchip, html[data-theme="light"] .gl-el.balance, html[data-theme="light"] .gl-el.btn-grad, html[data-theme="light"] .stepper button.gl-el, html[data-theme="light"] .seg button.gl-el, html[data-theme="light"] .segpair button.gl-el { --gl-shadow: 0 7px 12px -8px rgba(40,50,70,.45), 0 1px 3px rgba(40,50,70,.14); }
+.vs-thumb b.gl-el { --gl-shadow: 0 6px 14px -4px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.3); box-shadow: var(--gl-shadow) !important; }
+.orb-core.gl-el { --gl-shadow: 0 0 40px rgba(var(--acc-rgb),.25); }
+
+/* Glaskörper: dunkel ein leichter Schleier, hell ein heller (damit Text lesbar bleibt). Auf 0 gesetzt wäre das Glas ganz klar. */
+:root { --gl-veil: 28 30 34 .38; }
+html[data-theme="light"] { --gl-veil: 255 255 255 .42; }
+.gl-el { --gl-body-col: var(--gl-veil); }
+/* Fotokarten: nur Rand und Glanz über dem Foto */
+.gl-el.gl-top { --gl-body: 0; --gl-body-col: 0 0 0 0; }
+/* untere Leiste: durchsichtig, darunter läuft der Inhalt; die gleitende Pille ist ein heller Tropfen */
+#nav.gl-el { --gl-body: 0; --gl-body-col: 0 0 0 0; --gl-shadow: 0 14px 26px -16px rgba(0,0,0,.5); }
+.nav-pill.gl-el { --gl-body: .28; --gl-body-col: 255 255 255 .20; --gl-shadow: 0 8px 14px -8px rgba(0,0,0,.5); }
+html[data-theme="light"] .nav-pill.gl-el { --gl-body-col: 255 255 255 .55; --gl-shadow: 0 8px 14px -8px rgba(40,50,70,.4); }
+/* Tönungen: Hauptknöpfe fast voll, gewählte Elemente mit Akzent */
+.btn-grad.gl-el, .seg button.on.gl-el { --gl-tint: 232 233 236 .88; }
+html[data-theme="light"] .btn-grad.gl-el, html[data-theme="light"] .seg button.on.gl-el { --gl-tint: 20 22 26 .92; }
+.rchip.cur.gl-el { --gl-tint-on: 232 233 236 .88; }
+html[data-theme="light"] .rchip.cur.gl-el { --gl-tint-on: 20 22 26 .92; }
+.switch.gl-el { --gl-body-col: 120 124 132 .40; }
+.switch.gl-el.on { --gl-tint-on: var(--acc-rgb) / .62; }
+.switch.gl-el::after { background: #fff !important; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+.fl.hi.gl-el { --gl-tint: var(--acc-rgb) / .20; }
+.actbtn.danger.gl-el { --gl-tint: 255 120 100 .20; }
+/* Regler-Kugel: klarer Tropfen auf der Schiene */
+.vs-thumb b.gl-el { --gl-body: .42; --gl-body-col: 255 255 255 .34; }
+/* Halte-Kugel und Eingabefeld */
+.orb-core.gl-el { --gl-body: .40; --gl-body-col: 255 255 255 .12; border-color: transparent !important; animation: none; }
+.fld.big .in-wrap { display: block; position: relative; margin-top: 16px; border-radius: 20px; }
+.fld.big .in-wrap input { margin-top: 0; }
+.in-wrap.gl-el input { background: transparent; border-color: transparent; position: relative; }
+.in-wrap.gl-el:focus-within { box-shadow: 0 0 0 2px var(--ring), var(--gl-shadow) !important; }
+.gl-el .hf { z-index: 0; }
+
+/* ===== Kamera-Bildschirm: Glas-Look nur mit CSS (Live-Bild dahinter, hier läuft kein WebGL) ===== */
+#screen-train .glass, #screen-train .btn-end {
+  background: linear-gradient(135deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,.05) 40%, rgba(255,255,255,.015) 62%, rgba(255,255,255,.12) 100%);
+  -webkit-backdrop-filter: blur(16px) saturate(1.9) brightness(1.08); backdrop-filter: blur(16px) saturate(1.9) brightness(1.08);
+  border: 0;
+  box-shadow: inset 1.5px 1.5px 1px -1px rgba(255,255,255,.7), inset -1.5px -1.5px 1px -1px rgba(255,255,255,.28), inset 0 0 0 1px rgba(255,255,255,.08), inset 0 -14px 20px -14px rgba(0,0,0,.35), 0 14px 24px -12px rgba(0,0,0,.55);
+}
+#screen-train .zoombar button.on { background: linear-gradient(160deg, rgba(255,255,255,.96), rgba(255,255,255,.78)); box-shadow: inset 1px 1px 1px -1px #fff, 0 4px 10px -4px rgba(0,0,0,.45); }
+
+/* Kaufpanel schwebt über scrollenden Karten: Glaskörper deckend, sonst scheint der Inhalt dahinter durch */
+.buy-panel.gl-el { --gl-body-col: 30 32 37 .96; }
+html[data-theme="light"] .buy-panel.gl-el { --gl-body-col: 255 255 255 .96; }

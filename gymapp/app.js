@@ -296,6 +296,9 @@ function bindScroll(root) {
   update();
 }
 
+// Glas (glass.js) auf eine frisch gezeichnete Seite legen; ohne WebGL bleibt der CSS-Look
+function glassOn(root) { if (window.Glass) window.Glass.mount(root); }
+
 function rerenderKeep(name, fn) {
   const scr = screens[name];
   const old = scr.querySelector('.scroll');
@@ -448,7 +451,7 @@ function renderHome() {
     </div>`;
   setupMotion(screens.home);
   bindScroll(screens.home);
-  if (window.Glass) window.Glass.mount(screens.home);
+  glassOn(screens.home);
   screens.home.querySelectorAll('.tile, .start-btn').forEach(springPress);
 }
 
@@ -531,6 +534,7 @@ function renderInv() {
   if (row && cur) row.scrollLeft = Math.max(0, cur.offsetLeft - row.clientWidth / 2 + cur.offsetWidth / 2);
   setupMotion(screens.inv);
   bindScroll(screens.inv);
+  glassOn(screens.inv);
 }
 
 /* ---------- Shop ---------- */
@@ -584,6 +588,7 @@ function updateBuyPanel() {
       <button class="hold" id="hold" type="button" aria-label="${pkgBig(p)} einlösen, 2 Sekunden gedrückt halten"><div class="hf"></div><span class="hl" id="hold-label">Zum Einlösen gedrückt halten</span><span class="hl hl2" id="hold-label2" aria-hidden="true">Zum Einlösen gedrückt halten</span></button></div>`;
   panel.classList.add('show');
   bindHold(p.id, ok);
+  glassOn(screens.shop);
 }
 
 function bindHold(id, ok) {
@@ -721,6 +726,7 @@ function renderShop() {
   updateBuyPanel();
   setupMotion(screens.shop);
   bindScroll(screens.shop);
+  glassOn(screens.shop);
 }
 
 function openModal(html) {
@@ -811,6 +817,7 @@ function renderSettings() {
         <div class="item"><div>Alles zurücksetzen<span class="s">Löscht Punkte, Rang, Streak und Zeit.</span></div><button class="actbtn danger" type="button" data-act="reset">Löschen</button></div>
       </div></div>
     </div>`;
+  glassOn(screens.settings);
 }
 
 function exportData() {
@@ -859,6 +866,7 @@ function renderLock() {
       </div>
       <div class="onb-foot lock-foot">${btns}<p class="shop-note" style="margin-top:12px">Vorschau. In der iPhone-App erscheint dieser Bildschirm über jeder gesperrten App.</p></div>
     </div>`;
+  glassOn(screens.lock);
 }
 
 /* ---------- So funktioniert die Erkennung ---------- */
@@ -895,6 +903,7 @@ function renderHow() {
         <p>Die Erkennung ist nicht perfekt. Dunkle Kleidung, wenig Licht oder ein halb verdeckter Körper können zu Zählfehlern führen. Wie genau sie bei vielen verschiedenen Menschen ist, haben wir noch nicht gemessen.</p>
       </div></div>
     </div>`;
+  glassOn(screens.how);
 }
 
 /* ---------- Bezahl-Vorschau (Pro) ---------- */
@@ -953,6 +962,7 @@ function renderPro() {
       <div class="pro-links"><button type="button" data-act="pro-link">Käufe wiederherstellen</button><button type="button" data-act="pro-link">Nutzungsbedingungen</button><button type="button" data-act="pro-link">Datenschutz</button></div>
       <p class="shop-note" style="margin-top:14px">Vorschau: noch kein echter Kauf, und in dieser Web-Version ist nichts gesperrt. Alle Preise und Inhalte sind ein Vorschlag, noch nicht festgelegt.</p>
     </div>`;
+  glassOn(screens.pro);
 }
 
 /* ---------- Einstieg ---------- */
@@ -1179,7 +1189,7 @@ function renderOnb() {
     const nm = (onb.name || '').trim();
     body = `<h2>Wie heißt du?</h2>
       <div class="hello"><span class="hello-a">Hallo</span><span class="hello-n gradtext" id="hello-n">${nm ? ', ' + nm.replace(/[<>&"]/g, '') : '!'}</span></div>
-      <label class="fld big"><input id="onb-name" type="text" maxlength="20" autocomplete="off" autocapitalize="words" placeholder="Dein Name" value="${(onb.name || '').replace(/"/g, '&quot;')}"></label>
+      <label class="fld big"><span class="in-wrap"><input id="onb-name" type="text" maxlength="20" autocomplete="off" autocapitalize="words" placeholder="Dein Name" value="${(onb.name || '').replace(/"/g, '&quot;')}"></span></label>
       <p class="lead under" id="name-hint">Pflichtfeld. Der Name bleibt nur auf deinem Handy.</p>${next('Weiter', !nm)}`;
   } else if (key === 'age') {
     body = `<h2>Wie alt bist du?</h2>${sliderHTML('age', onb.age)}<p class="lead under">Schieb den Regler. Das bleibt nur auf deinem Handy.</p>${next()}`;
@@ -1231,6 +1241,7 @@ function renderOnb() {
       <p class="lead" style="margin-top:22px">Erst bewegen. Dann scrollen.</p></div>`;
   }
   screens.onb.innerHTML = `<div class="bgfx bg-home"></div><div class="onb"><div class="onb-top">${back}${dots}${skip}</div><div class="step${anim ? ' anim' : ''}">${body}</div></div>`;
+  glassOn(screens.onb);
 }
 
 function finishOnb(skipped) {
@@ -1810,6 +1821,7 @@ function renderDone() {
     </div>`;
   screens.done.classList.remove('noanim');
   setupMotion(screens.done);
+  glassOn(screens.done);
 }
 
 /* ---------- Bild aufhellen (dunkle Kleidung, dunkler Raum) ---------- */
