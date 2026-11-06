@@ -1340,3 +1340,7 @@ html[data-theme="light"] .hero .kb { filter: none; }
 
 /* Nur die untere Leiste behält einen leichten Blur: sonst liegt Text von der Seite durch die Beschriftung der Leiste */
 #app #nav.gl-el.gl-keep { -webkit-backdrop-filter: blur(9px) !important; backdrop-filter: blur(9px) !important; }
+
+/* Wirklich kein Weichzeichner: gleiche Selektoren wie die früheren Blur-Regeln, damit sie nicht überstimmt werden */
+#app .gl-el:not(.gl-keep):not(.gl-top):not(.gl-l1):not(.theme-card),
+#app .buy-panel.gl-el, #app .gl-el:not(.gl-keep), #screen-home.gl-on .gl-el, html:not([data-theme="light"]) #screen-home .gcard-in.gl-el { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }

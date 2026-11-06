@@ -181,17 +181,18 @@
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
-      float bodyA = clamp(uBody + band * 0.55, 0.0, 1.0);
+      float bodyA = clamp(uBody + band * 0.55, 0.0, 1.0) * mix(1.0, smoothstep(0.0, 1.0, uBody * 4.0 + band), 0.0);
+      bodyA = uBody > 0.001 ? clamp(uBody + band * 0.55, 0.0, 1.0) : band * 0.55;
 
       // Dicke und Wölbung: Schicht für Schicht über das Glas gelegt (so bleibt auch durchsichtiges Glas dreidimensional)
       vec2 qn = q / vec2(hw, hh);
       float dome = clamp(dot(qn, L), -1.0, 1.0);                    // +1 Lichtseite, -1 Schattenseite
       float dark = max(dot(nrm, -L), 0.0);
       float bev = smoothstep(13.0, 0.0, e);                          // abgeschrägte Kante
-      float sheen = smoothstep(0.45, -1.0, qn.y) * 0.07 * smoothstep(0.0, 12.0, e);   // weicher Glanz im oberen Teil
+      float sheen = 0.0;   // kein Glanz im Inneren: das Innere bleibt völlig klar   // weicher Glanz im oberen Teil
       float caust = smoothstep(2.0, 9.0, e) * smoothstep(28.0, 7.0, e) * dark;        // Licht sammelt sich innen gegenüber
-      float shA = clamp(bev * dark * 0.26 + max(-dome, 0.0) * 0.07 * smoothstep(0.0, 16.0, e), 0.0, 0.4) * (uLight > 0.5 ? 0.65 : 1.0);
-      float whA = clamp(max(dome, 0.0) * 0.035 + sheen, 0.0, 0.35);   // Glanz nur im Inneren, nicht am Rand
+      float shA = clamp(bev * dark * 0.26, 0.0, 0.4) * (uLight > 0.5 ? 0.65 : 1.0);   // nur die Kante, innen nichts
+      float whA = 0.0;   // Glanz nur im Inneren, nicht am Rand
 
       vec3 pre = col * bodyA;
       float alpha = bodyA;
