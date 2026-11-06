@@ -1203,8 +1203,8 @@ html[data-theme="light"] .gl-el.round-btn, html[data-theme="light"] .gl-el.switc
 .orb-core.gl-el { --gl-shadow: 0 0 40px rgba(var(--acc-rgb),.25); }
 
 /* Glaskörper: dunkel ein leichter Schleier, hell ein heller (damit Text lesbar bleibt). Auf 0 gesetzt wäre das Glas ganz klar. */
-:root { --gl-veil: 225 232 250 .70; }
-html[data-theme="light"] { --gl-veil: 255 255 255 .75; }
+:root { --gl-veil: 150 170 200 .30; }
+html[data-theme="light"] { --gl-veil: 190 205 225 .30; }
 .gl-el { --gl-body-col: var(--gl-veil); }
 /* Fotokarten: nur Rand und Glanz über dem Foto */
 .gl-el.gl-top { --gl-body: 0; --gl-body-col: 0 0 0 0; }
@@ -1270,3 +1270,15 @@ html[data-theme="light"] .buy-panel.gl-el { --gl-body-col: 255 255 255 .90; }
 #nav.gl-el { --gl-body: 0; }
 .nav-pill.gl-el { --gl-body: .30; }
 .gl-el.gl-top { --gl-body: 0; }
+
+/* ===== Wassertropfen: klar, wenig Weiß ===== */
+/* Hauptknöpfe: getöntes Glas statt weißer Fläche */
+.btn-grad.gl-el, .seg button.on.gl-el { --gl-tint: 70 85 115 .62; color: #fff; }
+html[data-theme="light"] .btn-grad.gl-el, html[data-theme="light"] .seg button.on.gl-el { --gl-tint: 25 35 55 .70; color: #fff; }
+.rchip.cur.gl-el { --gl-tint-on: 70 85 115 .62; color: #fff; }
+html[data-theme="light"] .rchip.cur.gl-el { --gl-tint-on: 25 35 55 .70; }
+/* gleitende Pille und Regler-Kugel: klarer Tropfen, nicht weiß */
+.nav-pill.gl-el { --gl-body: .22; --gl-body-col: 170 190 220 .25; }
+html[data-theme="light"] .nav-pill.gl-el { --gl-body-col: 190 205 230 .30; }
+.vs-thumb b.gl-el { --gl-body: .30; --gl-body-col: 200 215 240 .30; }
+.switch.gl-el::after { background: rgba(255,255,255,.92) !important; }

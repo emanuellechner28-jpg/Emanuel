@@ -171,8 +171,10 @@
         else nrm = vec2(0.0, sign(q.y));
       }
       float dome = dot(nrm, L) * pow(td, 1.4);
-      col += vec3(max(dome, 0.0) * (uLight > 0.5 ? 0.07 : 0.05));
-      col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.22 : 0.16);
+      col += vec3(max(dome, 0.0) * 0.015);
+      col *= 1.0 + min(dome, 0.0) * (uLight > 0.5 ? 0.30 : 0.26);
+      // Tropfen: Rand wirft das Licht stärker und wirkt dunkler (Brechung), innen bleibt es klar
+      col *= 1.0 - 0.20 * (1.0 - smoothstep(0.0, uBand * 0.9, e));
 
       // Kante: feine Linie, darüber das Licht am Rand (links/oben direkt, rechts/unten gespiegelt)
       float lined = smoothstep(0.5, 0.0, e) * (uLight > 0.5 ? 0.16 : 0.08);
@@ -182,8 +184,15 @@
       float shine = uShine;
       float rim = along < 1.0 ? shine * pow(min(1.0, facing), 1.5) * (1.0 - pow(along, 1.5)) : 0.0;
       // weiches Licht etwas weiter innen, nur auf der Lichtseite
-      float soft = smoothstep(0.0, 4.0, e) * smoothstep(14.0, 2.0, e) * max(dot(nrm, L), 0.0) * (uLight > 0.5 ? 0.16 : 0.10);
-      float hi = clamp(rim + soft, 0.0, 1.0);
+      float soft = smoothstep(0.0, 4.0, e) * smoothstep(14.0, 2.0, e) * max(dot(nrm, L), 0.0) * 0.05;
+      // Glanzpunkt: kleiner heller Fleck auf der Lichtseite (Fenster-Spiegelung im Tropfen)
+      vec2 spq = q - vec2(L.x * hw * 0.6, -hh + min(11.0, hh * 0.3));   // am oberen Rand, zur Lichtseite hin
+      vec2 ssz = vec2(clamp(hw * 0.45, 5.0, 38.0), clamp(hh * 0.16, 2.5, 6.0));
+      float spec = exp(-dot(spq / ssz, spq / ssz)) * smoothstep(2.0, 6.0, e) * 0.58;
+      // Lichtbogen: das Licht sammelt sich innen am Rand gegenüber (Tropfen als Linse)
+      float caust = smoothstep(2.0, 9.0, e) * smoothstep(30.0, 8.0, e) * max(dot(nrm, -L), 0.0);
+      col += vec3(caust * (uLight > 0.5 ? 0.10 : 0.16));
+      float hi = clamp(rim + soft + spec, 0.0, 1.0);
 
       // Dünnes Glas: innen durchsichtig, am Rand bleibt die Brechung als schmaler Streifen sichtbar
       float band = 1.0 - smoothstep(0.0, uBand, e);
